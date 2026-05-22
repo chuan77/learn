@@ -17,6 +17,25 @@ Add the ability to compare weather across multiple cities side by side.
 - City selector/dropdown to add cities
 - Grid layout showing weather metrics for each city
 - Visual comparison of temperatures and conditions
+- Remove button for each city in the comparison## Description
+Add the ability to compare weather across multiple cities side by side.
+
+## Implementation Tasks
+- [ ] Update `app.py` to fetch weather for multiple cities in a single request
+- [ ] Modify the template to display cities in a comparison grid
+- [ ] Add functionality to add/remove cities from comparison
+- [ ] Implement session-based storage for city list (max 5 cities)
+
+## Technical Approach
+- Use OpenWeatherMap's batch API or make parallel requests
+- Store city list in user session (max 5 cities limit)
+- Create a comparison card layout showing key metrics side by side
+- Add city management controls (add/remove buttons)
+
+## UI/UX
+- City selector/dropdown to add cities
+- Grid layout showing weather metrics for each city
+- Visual comparison of temperatures and conditions
 - Remove button for each city in the comparisonimport os
 from flask import Flask, render_template, request
 from flask_caching import Cache
