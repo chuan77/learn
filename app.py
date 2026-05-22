@@ -1,5 +1,6 @@
 import os
 from flask import Flask, render_template, request
+from flask_caching import Cache
 import requests
 
 app = Flask(__name__)
@@ -8,8 +9,15 @@ app = Flask(__name__)
 API_KEY = '8e0e3a41490b5d8afda55687c835b32d'
 API_URL = 'https://api.openweathermap.org/data/2.5/weather'
 
-def get_weather(city):
-    """Fetch weather data for a given city from OpenWeatherMap API."""
+# Cache configuration
+CACHE_TTL = int(os.environ.get('CACHE_TTL', 600))  # Default 10 minutes
+app.config['CACHE_TYPE'] = 'SimpleCache'
+app.config['CACHE_DEFAULT_TIMEOUT'] = CACHE_TTL
+cache = Cache(app)
+
+@cache.memoize(timeout=CACHE_TTL)
+def get_weather_cached(city):
+    """Fetch weather data for a given city from OpenWeatherMap API (cached)."""
     params = {
         'q': city,
         'appid': API_KEY,
@@ -40,6 +48,10 @@ def get_weather(city):
             return {'error': f'Error fetching weather: {str(e)}'}
     except requests.exceptions.RequestException as e:
         return {'error': f'Network error: {str(e)}'}
+
+def get_weather(city):
+    """Fetch weather data for a given city (wrapper that clears cache on miss)."""
+    return get_weather_cached(city)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
